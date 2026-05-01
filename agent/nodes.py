@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
 from langchain_groq import ChatGroq
+from pydantic import SecretStr
 
 from agent.prompts import ANSWER_SYSTEM_PROMPT, ROUTER_PROMPT
 from agent.state import AgentState
@@ -73,9 +75,16 @@ def get_llm() -> ChatGroq:
         raise RuntimeError("GROQ_API_KEY is missing. Add it to .env before chatting.")
     return ChatGroq(
         model=env_str("GROQ_MODEL", "llama-3.3-70b-versatile"),
-        api_key=api_key,
+        api_key=SecretStr(api_key),
         temperature=float(env_str("GROQ_TEMPERATURE", "0")),
     )
+
+
+def normalize_llm_text(value: Any) -> str:
+    if hasattr(value, "content"):
+        content = getattr(value, "content")
+        return content if isinstance(content, str) else str(content)
+    return value if isinstance(value, str) else str(value)
 
 
 def classify_query(query: str, use_llm_router: bool = False) -> str:
@@ -94,9 +103,10 @@ def classify_query(query: str, use_llm_router: bool = False) -> str:
 
     if use_llm_router:
         llm = get_llm()
-        result = llm.invoke(ROUTER_PROMPT.format(query=query)).content.strip().lower()
-        if result in {"debales", "external", "both", "chitchat"}:
-            return result
+        result = llm.invoke(ROUTER_PROMPT.format(query=query))
+        text = normalize_llm_text(result).strip().lower()
+        if text in {"debales", "external", "both", "chitchat"}:
+            return text
 
     return "external"
 
@@ -173,4 +183,4 @@ def answer_node(state: AgentState) -> AgentState:
         ("human", state["query"]),
     ]
     response = llm.invoke(messages)
-    return {**state, "answer": response.content}
+    return {**state, "answer": normalize_llm_text(response)}
