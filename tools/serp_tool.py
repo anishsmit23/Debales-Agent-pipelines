@@ -1,9 +1,20 @@
 from __future__ import annotations
 
-from duckduckgo_search import DDGS
+import warnings
+
 from langchain_core.tools import tool
 
 from settings import env_int
+
+try:
+    from ddgs import DDGS
+except ImportError:  # pragma: no cover
+    warnings.filterwarnings(
+        "ignore",
+        message=r"This package \(`duckduckgo_search`\) has been renamed to `ddgs`!.*",
+        category=RuntimeWarning,
+    )
+    from duckduckgo_search import DDGS
 
 
 def search_web(query: str, max_results: int | None = None) -> tuple[str, list[str]]:

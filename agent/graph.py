@@ -8,6 +8,8 @@ from agent.state import AgentState
 
 def route_after_router(state: AgentState) -> str:
     route = state.get("route") or "external"
+    if route == "chitchat":
+        return "answer"
     if route == "debales":
         return "rag"
     if route == "both":
@@ -31,6 +33,7 @@ def build_graph():
             "rag": "rag",
             "serp": "serp",
             "rag_for_both": "rag",
+            "answer": "answer",
         },
     )
     graph.add_conditional_edges(

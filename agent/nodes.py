@@ -37,6 +37,20 @@ EXTERNAL_HINTS = {
     "recent",
 }
 
+CHITCHAT_QUERIES = {
+    "hi",
+    "hello",
+    "hey",
+    "heya",
+    "good morning",
+    "good afternoon",
+    "good evening",
+    "thanks",
+    "thank you",
+    "bye",
+    "goodbye",
+}
+
 
 def get_llm() -> ChatGroq:
     api_key = os.getenv("GROQ_API_KEY")
@@ -51,6 +65,10 @@ def get_llm() -> ChatGroq:
 
 def classify_query(query: str, use_llm_router: bool = False) -> str:
     q = query.lower()
+    normalized = q.strip(" .,!?\t\r\n")
+    if normalized in CHITCHAT_QUERIES:
+        return "chitchat"
+
     mentions_debales = any(keyword in q for keyword in DEBALES_KEYWORDS)
     needs_external = any(keyword in q for keyword in EXTERNAL_HINTS)
 
@@ -62,7 +80,7 @@ def classify_query(query: str, use_llm_router: bool = False) -> str:
     if use_llm_router:
         llm = get_llm()
         result = llm.invoke(ROUTER_PROMPT.format(query=query)).content.strip().lower()
-        if result in {"debales", "external", "both"}:
+        if result in {"debales", "external", "both", "chitchat"}:
             return result
 
     return "external"
@@ -105,6 +123,12 @@ def aggregator_node(state: AgentState) -> AgentState:
 
 
 def answer_node(state: AgentState) -> AgentState:
+    if state.get("route") == "chitchat":
+        return {
+            **state,
+            "answer": "Hello! I am the Debales AI Assistant. Ask me anything about Debales AI, or ask a general question and I can search the web when needed.",
+        }
+
     if state.get("no_context"):
         return {
             **state,
