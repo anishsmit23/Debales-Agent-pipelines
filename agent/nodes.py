@@ -148,7 +148,7 @@ def answer_node(state: AgentState) -> AgentState:
     if state.get("route") == "chitchat":
         return {
             **state,
-            "answer": "Hello! I am the Debales AI Assistant. Ask me anything about Debales AI, its services, integrations, or logistics AI agents. I can also search the web for general questions when needed.",
+            "answer": "Hello! I am the Debales AI Assistant. Ask me anything about Debales AI, its services, integrations, or logistics AI agents. I can help you with that!! (I can also search the web for general questions when needed.)",
         }
 
     if state.get("no_context"):
