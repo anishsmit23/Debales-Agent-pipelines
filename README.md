@@ -82,6 +82,27 @@ python -m rag.ingest
 python main.py
 ```
 
+## Run The Web UI
+
+The web UI is connected to the same LangGraph backend through Flask.
+
+```bash
+python web_app.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5000
+```
+
+The UI displays the route on every assistant response:
+
+- `RAG` for Debales knowledge-base answers
+- `SerpAPI` for external search answers
+- `RAG + SerpAPI` for mixed answers
+- `No Context` when the hallucination guard is triggered
+
 ## Tests
 
 ```bash
@@ -99,6 +120,9 @@ agent/state.py         LangGraph state schema
 agent/nodes.py         Router, RAG, SERP, aggregation, answer nodes
 agent/graph.py         LangGraph workflow
 main.py                CLI entry point
+web_app.py             Flask API and web UI server
+templates/chat.html    Single-page chatbot UI
+static/debales-logo.png Header logo image
 ```
 
 ## Hallucination Guard
