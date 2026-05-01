@@ -15,6 +15,12 @@
     <img alt="ChromaDB" src="https://img.shields.io/badge/ChromaDB-Vector_DB-10c98f?style=for-the-badge" />
     <img alt="SerpAPI" src="https://img.shields.io/badge/SerpAPI-Web_Search-f59e0b?style=for-the-badge" />
     <img alt="Flask" src="https://img.shields.io/badge/Flask-Web_UI-000000?style=for-the-badge&logo=flask&logoColor=white" />
+    <a href="https://github.com/anishsmit23">
+      <img alt="GitHub" src="https://img.shields.io/badge/GitHub-anishsmit23-181717?style=for-the-badge&logo=github&logoColor=white" />
+    </a>
+    <a href="https://www.linkedin.com/in/anish55/">
+      <img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-anish55-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" />
+    </a>
   </p>
 </div>
 
