@@ -6,6 +6,11 @@
   <p>
     A LangGraph-powered chatbot for Debales AI that routes every query to the right source:
     Debales RAG, SerpAPI web search, both, or a no-hallucination fallback.
+    Imagine a receptionist at a company. This assistant works in the same way.
+    If you ask about the company, it checks internal documents.
+    If you ask something general, it searches the internet.
+    If it's both, it tries to check both places.
+    And if they don’t know, it honestly says so instead of guessing.
   </p>
 
   <p>
