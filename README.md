@@ -2,12 +2,14 @@
 
 A LangGraph chatbot centered around Debales AI.
 
-- Debales/company-relative questions use the local Debales AI RAG knowledge base.
-- Phrases like "you guys", "your services", "what do you provide", and "your company" are treated as Debales AI questions.
-- External/general questions use DuckDuckGo search.
-- Mixed questions use both Debales sources and web search.
-- Greetings and simple chat are answered directly without web search.
-- If there is no usable context, the assistant returns a fixed "I don't know" answer instead of guessing.
+Routing rules:
+
+- Debales queries -> local Debales RAG knowledge base.
+- Non-Debales queries -> SerpAPI web search.
+- Mixed queries -> both Debales RAG and SerpAPI.
+- Unknown/no-context queries -> no hallucination fallback.
+
+Company-relative wording is treated as Debales AI. For example, "you guys", "your services", "what do you provide", and "your company" all route to Debales RAG.
 
 ## Setup
 
@@ -18,28 +20,26 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-If you already installed dependencies before the latest LangChain package split, refresh them:
-
-```bash
-pip install -U -r requirements.txt
-```
-
-Add your free Groq key to `.env`:
+Add your keys to `.env`:
 
 ```env
 GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
-HF_TOKEN=
+SERPAPI_API_KEY=your_serpapi_key_here
 ```
 
 `HF_TOKEN` is optional. It only helps Hugging Face downloads get higher rate limits.
 
-The app reads configuration from `.env` through `settings.py`. You can also override these optional values:
+The app reads configuration from `.env` through `settings.py`. Optional values:
 
 ```env
+GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_TEMPERATURE=0
 USE_LLM_ROUTER=false
 RAG_TOP_K=4
 WEB_SEARCH_MAX_RESULTS=5
+SERPAPI_ENGINE=google
+SERPAPI_LOCATION=
+SERPAPI_TIMEOUT=20
 DEBALES_START_URLS=https://debales.ai/,https://debales.ai/blog,https://debales.ai/integrations
 SCRAPER_MAX_PAGES=80
 SCRAPER_DELAY_SECONDS=0.5
@@ -47,9 +47,10 @@ RAW_DIR=data/raw
 CHROMA_DIR=chroma_db
 CHROMA_COLLECTION=debales_ai_knowledge
 EMBEDDING_MODEL=all-MiniLM-L6-v2
+HF_TOKEN=
 ```
 
-## Build the Debales AI Knowledge Base
+## Build The Debales AI Knowledge Base
 
 Scrape Debales AI pages:
 
@@ -68,25 +69,23 @@ This creates:
 - `data/raw/*.txt`
 - `chroma_db/`
 
-If Debales questions return the no-context fallback, the knowledge base is not built yet or has no matching chunks. Re-run:
+If Debales questions return the no-context fallback, re-run:
 
 ```bash
 python -m scraper.scrape
 python -m rag.ingest
 ```
 
-## Run the Chatbot
+## Run The Chatbot
 
 ```bash
 python main.py
 ```
 
-## Optional Router Mode
+## Tests
 
-The default router is keyword based and free. To use the Groq model for routing too:
-
-```env
-USE_LLM_ROUTER=true
+```bash
+pytest
 ```
 
 ## Project Structure
@@ -95,7 +94,7 @@ USE_LLM_ROUTER=true
 scraper/scrape.py      Scrapes Debales AI pages into text files
 rag/ingest.py          Chunks, embeds, and stores content in Chroma
 rag/retriever.py       Retrieves relevant Debales chunks
-tools/serp_tool.py     DuckDuckGo web search tool
+tools/serp_tool.py     SerpAPI search wrapper
 agent/state.py         LangGraph state schema
 agent/nodes.py         Router, RAG, SERP, aggregation, answer nodes
 agent/graph.py         LangGraph workflow
@@ -104,7 +103,7 @@ main.py                CLI entry point
 
 ## Hallucination Guard
 
-The answer node never calls the LLM without context. If RAG and web search both return no context, it returns:
+The answer node never calls the LLM without context. If RAG and SerpAPI both return no context, it returns:
 
 ```text
 I don't have enough information to answer that based on available sources.

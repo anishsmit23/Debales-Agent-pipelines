@@ -18,6 +18,7 @@ def ask(query: str) -> dict:
         "route": None,
         "rag_context": None,
         "serp_context": None,
+        "serp_error": None,
         "context": None,
         "no_context": False,
         "answer": None,

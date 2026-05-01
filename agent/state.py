@@ -6,6 +6,7 @@ class AgentState(TypedDict):
     route: Optional[str]
     rag_context: Optional[str]
     serp_context: Optional[str]
+    serp_error: Optional[str]
     context: Optional[str]
     no_context: bool
     answer: Optional[str]

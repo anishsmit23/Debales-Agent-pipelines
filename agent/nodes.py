@@ -135,11 +135,14 @@ def rag_node(state: AgentState) -> AgentState:
 
 def serp_node(state: AgentState) -> AgentState:
     context, sources = search_web(state["query"], max_results=env_int("WEB_SEARCH_MAX_RESULTS", 5))
-    if context.startswith("Web search failed:"):
+    serp_error = None
+    if context.startswith("SERP API search failed:"):
+        serp_error = context
         context = ""
     return {
         **state,
         "serp_context": context,
+        "serp_error": serp_error,
         "sources": sorted(set(state.get("sources", []) + sources)),
     }
 
@@ -169,6 +172,15 @@ def answer_node(state: AgentState) -> AgentState:
                     "I don't have enough information to answer that based on available sources.\n\n"
                     "The Debales AI knowledge base may be empty. Run `python -m scraper.scrape` "
                     "and then `python -m rag.ingest`, then ask again."
+                ),
+            }
+
+        if state.get("serp_error"):
+            return {
+                **state,
+                "answer": (
+                    "I don't have enough information to answer that based on available sources.\n\n"
+                    f"{state['serp_error']}"
                 ),
             }
 
