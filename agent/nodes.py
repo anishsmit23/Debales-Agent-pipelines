@@ -14,9 +14,24 @@ from tools.serp_tool import search_web
 DEBALES_KEYWORDS = {
     "debales",
     "debales ai",
+    "you guys",
+    "you provide",
+    "you offer",
+    "your",
+    "your ai",
     "your company",
     "your product",
+    "your products",
+    "your service",
     "your services",
+    "your solution",
+    "your solutions",
+    "what do you do",
+    "what do you provide",
+    "what do you offer",
+    "what services",
+    "services you",
+    "services do you",
     "integration",
     "integrations",
     "pricing",
@@ -86,6 +101,12 @@ def classify_query(query: str, use_llm_router: bool = False) -> str:
     return "external"
 
 
+def build_debales_search_query(query: str) -> str:
+    if "debales" in query.lower():
+        return query
+    return f"Debales AI {query}"
+
+
 def router_node(state: AgentState) -> AgentState:
     use_llm_router = env_bool("USE_LLM_ROUTER", False)
     route = classify_query(state["query"], use_llm_router=use_llm_router)
@@ -93,7 +114,8 @@ def router_node(state: AgentState) -> AgentState:
 
 
 def rag_node(state: AgentState) -> AgentState:
-    context, sources = retrieve_debales_context(state["query"], k=env_int("RAG_TOP_K", 4))
+    retrieval_query = build_debales_search_query(state["query"])
+    context, sources = retrieve_debales_context(retrieval_query, k=env_int("RAG_TOP_K", 4))
     return {
         **state,
         "rag_context": context,
@@ -126,7 +148,7 @@ def answer_node(state: AgentState) -> AgentState:
     if state.get("route") == "chitchat":
         return {
             **state,
-            "answer": "Hello! I am the Debales AI Assistant. Ask me anything about Debales AI, or ask a general question and I can search the web when needed.",
+            "answer": "Hello! I am the Debales AI Assistant. Ask me anything about Debales AI, its services, integrations, or logistics AI agents. I can also search the web for general questions when needed.",
         }
 
     if state.get("no_context"):
