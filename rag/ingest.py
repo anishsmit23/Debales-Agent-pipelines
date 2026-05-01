@@ -3,12 +3,12 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from rag.config import CHROMA_DIR, COLLECTION_NAME, RAW_DIR
 from rag.embeddings import get_embeddings
+from rag.vectorstore import Chroma
 
 
 def load_raw_documents(raw_dir: Path = RAW_DIR) -> list[Document]:
@@ -57,14 +57,19 @@ def ingest(raw_dir: Path = RAW_DIR, chroma_dir: Path = CHROMA_DIR) -> int:
         embedding_function=embeddings,
         persist_directory=str(chroma_dir),
     )
-    vectorstore.delete_collection()
+    try:
+        vectorstore.delete_collection()
+    except Exception:
+        pass
+
     vectorstore = Chroma.from_documents(
         documents=chunks,
         embedding=embeddings,
         collection_name=COLLECTION_NAME,
         persist_directory=str(chroma_dir),
     )
-    vectorstore.persist()
+    if hasattr(vectorstore, "persist"):
+        vectorstore.persist()
     return len(chunks)
 
 

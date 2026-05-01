@@ -58,7 +58,7 @@ def run_cli() -> None:
         sources = result.get("sources", [])
 
         if console:
-            console.print(Panel(answer, title=f"Assistant · route: {route}"))
+            console.print(Panel(answer, title=f"Assistant - route: {route}"))
             if sources:
                 console.print("Sources:")
                 for source in sources[:8]:
@@ -73,3 +73,4 @@ def run_cli() -> None:
 
 if __name__ == "__main__":
     run_cli()
+

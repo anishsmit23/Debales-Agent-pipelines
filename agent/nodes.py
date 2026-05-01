@@ -130,6 +130,16 @@ def answer_node(state: AgentState) -> AgentState:
         }
 
     if state.get("no_context"):
+        if state.get("route") == "debales":
+            return {
+                **state,
+                "answer": (
+                    "I don't have enough information to answer that based on available sources.\n\n"
+                    "The Debales AI knowledge base may be empty. Run `python -m scraper.scrape` "
+                    "and then `python -m rag.ingest`, then ask again."
+                ),
+            }
+
         return {
             **state,
             "answer": "I don't have enough information to answer that based on available sources.",
