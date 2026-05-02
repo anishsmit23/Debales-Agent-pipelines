@@ -234,41 +234,41 @@ pytest tests/test_web_app.py
 
 ```text
 agent/
-  graph.py              LangGraph workflow (nodes + edges)
-  nodes.py              Router, RAG, SerpAPI, aggregator, answer nodes
-  prompts.py            System and router prompts
-  state.py              Agent state schema
+  graph.py              #LangGraph workflow (nodes + edges)
+  nodes.py              #Router, RAG, SerpAPI, aggregator, answer nodes
+  prompts.py            #System and router prompts
+  state.py              #Agent state schema
 
 rag/
-  ingest.py             Chunk + embed + store Debales content
-  retriever.py          Chroma retrieval with raw-text fallback
-  embeddings.py         Hugging Face embeddings
-  vectorstore.py        Chroma wrapper
+  ingest.py             #Chunk + embed + store Debales content
+  retriever.py          #Chroma retrieval with raw-text fallback
+  embeddings.py         #Hugging Face embeddings
+  vectorstore.py        #Chroma wrapper
 
 scraper/
-  scrape.py             Debales website scraper
+  scrape.py             #Debales website scraper
 
 tools/
-  serp_tool.py          SerpAPI search wrapper
+  serp_tool.py          #SerpAPI search wrapper
 
 templates/
-  chat.html             Web UI template
+  chat.html             #Web UI template
 
 static/
-  debales-logo.png      Header logo
-  ui-preview.png        README UI preview screenshot
+  debales-logo.png      #Header logo
+  ui-preview.png        #README UI preview screenshot
 
 tests/
-  conftest.py           Pytest fixtures
-  test_router.py        Router behavior tests
-  test_serp_tool.py     SerpAPI wrapper tests
-  test_conversation.py  End-to-end conversation route tests
-  test_web_app.py       Flask API contract tests
+  conftest.py           #Pytest fixtures
+  test_router.py        #Router behavior tests
+  test_serp_tool.py     #SerpAPI wrapper tests
+  test_conversation.py  #End-to-end conversation route tests
+  test_web_app.py       #Flask API contract tests
 
-main.py                 CLI entry point
-web_app.py              Flask web app
-settings.py             Environment helpers
-requirements.txt        Python dependencies
+main.py                 #CLI entry point
+web_app.py              #Flask web app
+settings.py             #Environment helpers
+requirements.txt        #Python dependencies
 ```
 
 ## No-Hallucination Guard
